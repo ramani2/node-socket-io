@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Ndode and Socket.IO</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="" id="form-chat">
+      <input id="message" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      (() => {
+        const socket = io();
+        socket.on('message', (msg) => {
+          const messages  = document.getElementById('messages');
+          const listElement = document.createElement('li');
+          listElement.textContent = msg;
+          messages.appendChild(listElement);
+          window.scrollTo(0, document.body.scrollHeight);
+        });
+        document.getElementById('form-chat').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const message  = document.getElementById('message');
+          socket.emit('message', message.value);
+          message.value='';
+          return false;
+        });
+      })();
+    </script>
+  </body>
+</html>
