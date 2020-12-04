@@ -48,9 +48,9 @@
       const video = document.getElementById('video');
       // Get access to the camera!constraints
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        let frontCamera = true;
         const playVideo = () => {
           // Prefer camera resolution nearest to 1280x720.
-          let frontCamera = true;
           const constraints = {
             audio: true,
             video: {
