@@ -9,7 +9,11 @@ const server = app.listen(port, () => {
 const io = require('socket.io')(server);
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/video', (req, res) => {
+  res.sendFile(__dirname + '/public/video.html');
 });
 
 io.on('connection', function(socket) {

@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Ndode and Socket.IO</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      #snap, #stop, #start, #flip-button {
+        background: #f9f9f9;
+        display: inline-block;
+        padding: 6px 14px;
+        border: 1px solid #eee;
+        margin: 0 10px 0 0;
+        text-decoration: none;
+        cursor: pointer;
+        color: #07a;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="video" width="1080" height="580" autoplay controls></video>
+    <div>
+      <button id="snap">Snap Photo</button>
+      <button id="start">Satrt Video</button>
+      <button id="stop">Stop Video</button>
+      <button id="flip-button">Flip Video</button>
+      <canvas id="canvas" width="1080" height="580"></canvas>
+    </div>
+    <script>
+      const detectMobile = () => {
+        const toMatch = [
+          /Android/i,
+          /webOS/i,
+          /iPhone/i,
+          /iPad/i,
+          /iPod/i,
+          /BlackBerry/i,
+          /Windows Phone/i
+        ];
+        return toMatch.some((toMatchItem) => {
+          return navigator.userAgent.match(toMatchItem);
+        });
+      }
+      // Grab elements, create settings, etc.
+      const video = document.getElementById('video');
+      // Get access to the camera!constraints
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const playVideo = () => {
+          // Prefer camera resolution nearest to 1280x720.
+          let frontCamera = true;
+          const constraints = {
+            audio: true,
+            video: {
+              width: { min: 1024, ideal: 1280, max: 1920 },
+              height: { min: 576, ideal: 720, max: 1080 },
+              facingMode: (frontCamera ? 'user' : 'environment') 
+            }
+          }; 
+          navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+            //video.src = window.URL.createObjectURL(stream);
+            video.srcObject = stream;
+            video.play();  
+            document.getElementById('stop').addEventListener('click', (e) => {
+              e.preventDefault();
+              stream.getTracks().forEach((track) => {
+                if (track.readyState == 'live') {
+                  track.stop();
+                }
+              });
+              video.srcObject = null;
+            });
+          });
+        };
+        document.getElementById('start').addEventListener('click', (e) => {
+          e.preventDefault();
+          playVideo();
+        });
+        if (detectMobile()) {
+          document.getElementById('flip-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            frontCamera = !frontCamera;
+          });
+        }
+      }
+      // Elements for taking the snapshot
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      // Trigger photo take
+      document.getElementById('snap').addEventListener('click', function() {
+        context.drawImage(video, 0, 0, 1080, 580);
+      });
+    </script>
+  </body>
+</html>
