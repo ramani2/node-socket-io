@@ -1,13 +1,13 @@
 <!doctype html>
 <html>
   <head>
-    <title>Ndode and Socket.IO</title>
+    <title>Capture User Media</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      #snap, #stop, #start, #flip-button {
+      #snap, #stop, #start, #flip-button, #fullscreen, #rotate {
         background: #f9f9f9;
         display: inline-block;
         padding: 6px 14px;
@@ -18,17 +18,28 @@
         color: #07a;
         margin-bottom: 10px;
       }
+      #video-container.rotate{
+        -moz-transform:/*scale(1.5)*/ rotate(20deg);
+        -webkit-transform:/*scale(1.5)*/ rotate(20deg);
+        -o-transform:/*scale(1.5)*/ rotate(20deg);
+        -ms-transform:/*scale(1.5)*/ rotate(20deg);
+        transform:/*scale(1.5)*/ rotate(20deg);
+      }
     </style>
   </head>
   <body>
-    <video id="video" width="1080" height="580" autoplay controls></video>
-    <div>
-      <button id="snap">Snap Photo</button>
-      <button id="start">Satrt Video</button>
-      <button id="stop">Stop Video</button>
-      <button id="flip-button">Flip Video</button>
+    <div id="video-container">
+      <video id="video" width="1080" height="580" autoplay controls></video>
+      <div>
+        <button id="snap">Snap Photo</button>
+        <button id="start">Satrt Video</button>
+        <button id="stop">Stop Video</button>
+        <button id="flip-button">Flip Camera</button>
+        <button id="fullscreen">Full Screen Mode</button>
+        <button id="rotate">Rotate Video</button>
+      </div>
+      <canvas id="canvas" width="1080" height="580"></canvas>
     </div>
-    <canvas id="canvas" width="1080" height="580"></canvas>
     <script>
       const detectMobile = () => {
         const toMatch = [
@@ -92,6 +103,29 @@
       // Trigger photo take
       document.getElementById('snap').addEventListener('click', function() {
         context.drawImage(video, 0, 0, 1080, 580);
+      });
+      // Rotate video
+      document.getElementById('rotate').addEventListener('click', (e) => {
+        e.preventDefault();
+        const videoContainer = document.getElementById('video-container');
+        if (videoContainer.classList.contains('rotate')) {
+          videoContainer.classList.remove('rotate');
+        } else {
+          videoContainer.classList.add('rotate')
+        }
+      });
+      // Put video into fullscreen mode
+      document.getElementById('fullscreen').addEventListener('click', (e) => {
+        const elem = video;
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+          elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { 
+          elem.msRequestFullscreen();
+        }
       });
     </script>
   </body>

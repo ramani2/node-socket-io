@@ -16,12 +16,17 @@ app.get('/video', (req, res) => {
   res.sendFile(__dirname + '/public/video.html');
 });
 
-io.on('connection', function(socket) {
+io.on('connection', (socket) => {
   console.log('user connected', socket.id);
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
-  socket.on('message', function(msg){
+  socket.on('message', (msg) => {
     io.emit('message', msg);
   });
+  /* socket.on('stream', (stream) => {
+    console.log(stream);
+    // Send message to everyone but sender
+    socket.broadcast.emit('stream', stream);
+  }); */
 });
